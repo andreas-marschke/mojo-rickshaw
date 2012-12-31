@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+use Mojolicious::Lite;
+
+# Documentation browser under "/perldoc"
+plugin 'PODRenderer';
+
+my $x = 0;
+
+get '/' => sub {
+  my $self = shift;
+  $self->render('index');
+};
+
+get '/json' => sub {
+  my $self = shift;
+  
+  $self->render_json({ "New York" => rand() * 100 ,
+		       "Washington" =>  rand() * 100 ,
+		       "Miami" => rand() * 100
+		     });
+  
+};
+
+app->start;
+
+
+
+
+

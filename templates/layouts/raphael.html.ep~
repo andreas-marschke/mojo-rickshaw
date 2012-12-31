@@ -1,0 +1,23 @@
+<!doctype html>
+<html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title><%= title %></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  %= stylesheet '/css/h5bp.css'
+  %= stylesheet '/css/style.css'
+</head>
+<body>
+
+  <%= content %>
+  %= javascript '/js/libs/jquery.js'
+  %= javascript '/js/libs/underscore.js'
+  %= javascript '/js/libs/backbone.js'
+  %= javascript '/js/libs/d3.js'
+  %= javascript '/js/libs/d3.layout.js'
+  %= javascript '/js/libs/rickshaw.js'
+  %= javascript '/js/plugins.js'
+  %= javascript '/js/script.js'
+</body>
+</html>
