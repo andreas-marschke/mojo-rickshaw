@@ -4,7 +4,7 @@ This is an example for using rickshaw.js with Mojolicious and rickshaw.js and ba
 
 If you have Mojolicious::Lite installed on your system you can start the server like this: 
 
-  ./mojo-h5bp daemon
+    ./mojo-h5bp daemon
 
 and open http://localhost:3000 to view this example in action
 
