@@ -7,26 +7,43 @@
         initialize: function() {
 	    _.extend(this,Backbone.Events);
             this.palette = new Rickshaw.Color.Palette({scheme: "classic9"});
-            this.series = new Rickshaw.Series({
-                color: this.palette.color(),
-                data: []
-            });
+	    this.series = this.getSeries();
         },
+	getSeries: function () {},
         fetch: function() {
             var that = this;
             $.ajax({
                 type: 'GET',
                 url: this.url,
                 success: function(data) {
-                    that.add(new State(data));
-		    that.series.addData(data);
 		    if(that.length === 1) {
 			that.trigger('first-data');
 		    }
 		    that.trigger('series-update');
+		    that.add(new State(data));
+		    that.series.addData(data);
                 }
             });
         }
+    });
+
+    var StatesNormal =  States.extend({
+	getSeries: function() {
+	    return new Rickshaw.Series({
+		color: this.palette.color(),
+		data: []
+            });
+	}
+    });
+
+    var StatesFixedDuration =  States.extend({
+	getSeries: function(options) {
+	    return new Rickshaw.Series.FixedDuration({},this.pallete,{
+                color: this.palette.color(),
+		timeInterval: 100,
+		maxDataPoints: 100
+	    });
+	}
     });
 
     var StateView = Backbone.View.extend({
@@ -40,7 +57,7 @@
             });
 	    this.legend = new Rickshaw.Graph.Legend({
 		graph: this.graph,
-		element: document.querySelector('#legend')
+		element: this.options.legend
 	    });
 
 	    this.highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
@@ -74,15 +91,27 @@
         }
     });
 
-    var states = new States();
+    var states_n = new StatesNormal();
+    var states_f = new StatesFixedDuration();
 
     setInterval(function() {
-        states.fetch();
+        states_n.fetch();
+        states_f.fetch();
     },1000);
-    var view;
-    states.on('first-data', function() { 
-	view = new StateView({el: $('#root'), collection: states});
+    var view_n;
+    states_n.on('first-data', function() { 
+	view = new StateView({el: $('#normal div[data-rickshaw-el-type="graph"]'),
+			      legend: document.querySelector('#normal div[data-rickshaw-el-type="graph"]'),
+			      collection: states_n});
     });
 
-
+    states_f.on('first-data', function() {
+	_.each(_.keys(states_f.at(0).attributes),function(key){
+	});
+	view = new StateView({el: $('#fixed div[data-rickshaw-el-type="graph"]'), 
+			      legend: document.querySelector('#fixed div[data-rickshaw-el-type="graph"]'),
+			      collection: states_f
+			     });
+		
+    });
 })(this, this.document);

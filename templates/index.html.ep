@@ -1,5 +1,12 @@
 % title 'Start';
 % layout 'default';
 
-<div id="root"></div>
-<div id="legend"></div>
+<div id="normal">
+  <div data-rickshaw-el-type="graph"></div>
+  <div data-rickshaw-el-type="legend"></div>
+</div>
+
+<div id="fixed">
+  <div data-rickshaw-el-type="graph"></div>
+  <div data-rickshaw-el-type="legend"></div>
+</div>
