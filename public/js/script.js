@@ -17,6 +17,10 @@
                 url: this.url,
                 success: function(data) {
 		    if(that.length === 1) {
+			/* Hotfix for buggy rendering of fixedDuration series*/
+			if(that.series[0].name === "baseline") {
+			    that.series.shift();
+			}
 			that.trigger('first-data');
 		    }
 		    that.trigger('series-update');
@@ -38,7 +42,7 @@
 
     var StatesFixedDuration =  States.extend({
 	getSeries: function(options) {
-	    return new Rickshaw.Series.FixedDuration({},this.pallete,{
+	    return new Rickshaw.Series.FixedDuration([{name:"baseline"}],this.pallete,{
                 color: this.palette.color(),
 		timeInterval: 100,
 		maxDataPoints: 100
@@ -114,4 +118,5 @@
 			     });
 		
     });
+    window.foo = states_f;
 })(this, this.document);
