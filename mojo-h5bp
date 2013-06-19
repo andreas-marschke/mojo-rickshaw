@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
+use Mojo::JSON "j";
+use Data::Dumper;
 
-# Documentation browser under "/perldoc"
 plugin 'PODRenderer';
 
 my $x = 0;
@@ -11,14 +12,38 @@ get '/' => sub {
   $self->render('index');
 };
 
-get '/json' => sub {
+get '/websockets' => sub{
   my $self = shift;
+  my $state_url = $self->url_for('state')->to_abs();
+  $self->app->log->info($state_url);
+  $state_url =~ s/^http/ws/;
+  $self->render( json => { "state" => $state_url  });
+};
+
+get '/hosts' => sub {
+  my $self = shift;
+  $self->render(json => ["google", "amazon", "ebay"]);
+};
+
+websocket '/state' => sub {
+  my $self = shift;
+  Mojo::IOLoop->stream($self->tx->connection)->timeout(300);
+  my $socket = $self;
+  my $id = Mojo::IOLoop->recurring(
+    1 => sub {
+      my $j = Mojo::JSON->new;
+      $socket->send($j->encode({"google" => rand() * 100,
+				 "amazon" => rand() * 100,
+				 "ebay" => rand() * 100
+			       }));
+      return;
+    });
   
-  $self->render_json({ "New York" => rand() * 100 ,
-		       "Washington" =>  rand() * 100 ,
-		       "Miami" => rand() * 100
-		     });
-  
+  $self->on(
+    finish => sub {
+      my ($self, $code, $reason) = @_;
+      $self->app->log->debug("WebSocket closed with status $code.");
+    });
 };
 
 app->start;
